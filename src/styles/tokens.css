@@ -1,0 +1,45 @@
+/* =========================================================
+   FINDAIMARKET — DESIGN TOKENS (single source of truth)
+
+   Rule: raw colors live ONLY in section 1.
+   Everything else is derived from them, so changing the
+   brand (or adding Modern Mode later) means editing here.
+   ========================================================= */
+
+:root {
+  /* ---------- 1. Core palette (raw colors) ---------- */
+  --brand-primary: #17243B;
+  --brand-primary-light: #263954;
+  --brand-accent: #F28C28;
+  --brand-accent-hover: #DD7618;
+  --brand-text-light: #FFFFFF;
+  --brand-black: #000000;
+
+  --brand-success: #21865B;
+  --brand-error: #D64545;
+  --brand-warning: #E6A23C;
+
+  /* ---------- 2. Semantic tokens: "Luxury Dark" (Classic Mode) ---------- */
+  --brand-background: color-mix(in srgb, var(--brand-primary) 55%, var(--brand-black));
+  --brand-surface: color-mix(in srgb, var(--brand-primary) 80%, var(--brand-black));
+  --brand-surface-hover: var(--brand-primary);
+
+  --brand-text: color-mix(in srgb, var(--brand-text-light) 94%, var(--brand-accent));
+  --brand-text-secondary: color-mix(in srgb, var(--brand-text-light) 68%, var(--brand-primary));
+  --brand-on-accent: var(--brand-primary);
+
+  --brand-border: color-mix(in srgb, var(--brand-text-light) 14%, transparent);
+  --brand-glass: color-mix(in srgb, var(--brand-primary) 62%, transparent);
+
+  --brand-shadow-card: 0 8px 30px color-mix(in srgb, var(--brand-black) 35%, transparent);
+}
+
+/* ---------------------------------------------------------
+   Previous light theme values (to restore a light option):
+     --brand-background: #FFFFFF;
+     --brand-surface: #F7F8FA;
+     --brand-surface-hover: #EEF1F5;
+     --brand-text: #17243B;
+     --brand-text-secondary: #687386;
+     --brand-border: #E5E8ED;
+   --------------------------------------------------------- */
