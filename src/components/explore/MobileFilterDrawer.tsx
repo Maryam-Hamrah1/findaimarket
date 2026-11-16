@@ -1,0 +1,102 @@
+import { X } from 'lucide-react'
+import { useEffect, useRef, type ReactNode } from 'react'
+import Button from '../ui/Button'
+
+interface MobileFilterDrawerProps {
+  open: boolean
+  onClose: () => void
+  resultCount: number
+  activeCount: number
+  onClearAll: () => void
+  children: ReactNode
+}
+
+/** Slide-in filter panel for screens below the lg breakpoint. */
+export default function MobileFilterDrawer({
+  open,
+  onClose,
+  resultCount,
+  activeCount,
+  onClearAll,
+  children,
+}: MobileFilterDrawerProps) {
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    if (!open) return
+
+    const previouslyFocused = document.activeElement
+    const previousOverflow = document.body.style.overflow
+
+    document.body.style.overflow = 'hidden'
+    closeButtonRef.current?.focus()
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose()
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      document.body.style.overflow = previousOverflow
+
+      if (previouslyFocused instanceof HTMLElement) {
+        previouslyFocused.focus()
+      }
+    }
+  }, [open, onClose])
+
+  if (!open) return null
+
+  return (
+    <div className="fixed inset-0 z-[60] lg:hidden">
+      {/* Backdrop */}
+      <div
+        className="drawer-overlay absolute inset-0 bg-background/80 backdrop-blur-sm"
+        onClick={onClose}
+        aria-hidden="true"
+      />
+
+      {/* Panel */}
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Filters"
+        className="drawer-panel absolute inset-y-0 left-0 flex w-[90%] max-w-sm flex-col border-r border-brand-border bg-surface"
+      >
+        <div className="flex items-center justify-between border-b border-brand-border px-5 py-4">
+          <h2 className="font-display text-2xl font-semibold text-foreground">
+            Filters
+          </h2>
+
+          <button
+            ref={closeButtonRef}
+            type="button"
+            onClick={onClose}
+            aria-label="Close filters"
+            className="rounded-full p-2 text-foreground transition-colors hover:bg-surface-hover"
+          >
+            <X size={22} />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-5 py-5">{children}</div>
+
+        <div className="flex gap-3 border-t border-brand-border px-5 py-4">
+          <Button
+            variant="outline"
+            onClick={onClearAll}
+            disabled={activeCount === 0}
+          >
+            Clear all
+          </Button>
+
+          <Button variant="secondary" fullWidth onClick={onClose}>
+            Show {resultCount} {resultCount === 1 ? 'product' : 'products'}
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+}

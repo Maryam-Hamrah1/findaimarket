@@ -70,3 +70,36 @@ body {
       0 0 280px color-mix(in srgb, var(--brand-primary-light) 80%, transparent);
   }
 }
+
+/* Explore page helpers */
+@layer utilities {
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@keyframes drawer-in {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.drawer-panel { animation: drawer-in 0.25s ease-out; }
+.drawer-overlay { animation: fade-in 0.2s ease-out; }
+.rise-in { animation: rise-in 0.35s ease-out both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .drawer-panel, .drawer-overlay, .rise-in { animation: none; }
+}
