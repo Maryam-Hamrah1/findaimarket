@@ -99,7 +99,8 @@ body {
 .drawer-panel { animation: drawer-in 0.25s ease-out; }
 .drawer-overlay { animation: fade-in 0.2s ease-out; }
 .rise-in { animation: rise-in 0.35s ease-out both; }
+.fade-in { animation: fade-in 0.3s ease-out both; }
 
 @media (prefers-reduced-motion: reduce) {
-  .drawer-panel, .drawer-overlay, .rise-in { animation: none; }
+  .drawer-panel, .drawer-overlay, .rise-in, .fade-in { animation: none; }
 }

@@ -1,49 +1,16 @@
+import { getProductPath } from '../../data/productDetails'
+import { PRODUCTS } from '../../data/products'
+import { getStoreByName } from '../../data/stores'
 import ProductCard from '../ui/ProductCard'
 import SectionHeading from '../ui/SectionHeading'
 
-const products = [
-  {
-    id: 1,
-    name: 'Elegant Leather Handbag',
-    image:
-      'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600',
-    price: 49.99,
-    oldPrice: 69.99,
-    rating: 4.8,
-    reviews: 124,
-    isNew: true,
-    isFeatured: true,
-  },
-  {
-    id: 2,
-    name: 'Classic Minimalist Wrist Watch',
-    image:
-      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600',
-    price: 35,
-    rating: 4.6,
-    reviews: 87,
-  },
-  {
-    id: 3,
-    name: 'Modern Fashion Sunglasses',
-    image:
-      'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600',
-    price: 24.99,
-    oldPrice: 39.99,
-    rating: 4.9,
-    reviews: 215,
-  },
-  {
-    id: 4,
-    name: 'Premium Running Shoes',
-    image:
-      'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600',
-    price: 59.99,
-    rating: 4.7,
-    reviews: 96,
-    isNew: true,
-  },
-]
+/** Catalogue ids shown on the home page. Everything else comes from the catalogue. */
+const FEATURED_IDS = [1, 16, 17, 38]
+
+const featured = FEATURED_IDS.flatMap((id) => {
+  const product = PRODUCTS.find((item) => item.id === id)
+  return product ? [product] : []
+})
 
 export default function FeaturedProducts() {
   return (
@@ -60,9 +27,10 @@ export default function FeaturedProducts() {
 
         {/* Products */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {products.map((product) => (
+          {featured.map((product) => (
             <ProductCard
               key={product.id}
+              productId={product.id}
               name={product.name}
               image={product.image}
               price={product.price}
@@ -71,6 +39,9 @@ export default function FeaturedProducts() {
               reviews={product.reviews}
               isNew={product.isNew}
               isFeatured={product.isFeatured}
+              store={product.store}
+              storeSlug={getStoreByName(product.store)?.slug}
+              to={getProductPath(product)}
             />
           ))}
         </div>
