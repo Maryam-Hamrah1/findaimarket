@@ -1,5 +1,8 @@
 import type { CategoryId, Product } from './product'
 
+/** Directory category. Stores outside the product categories use 'other' and keep their own label. */
+export type StoreCategoryId = CategoryId | 'other'
+
 /* ---------------------------------------------------------
    Store (shown in the directory and on the storefront header)
    --------------------------------------------------------- */
@@ -14,7 +17,9 @@ export interface Store {
   logo: string
   /** Image URL. An empty string shows the brand background instead. */
   coverImage: string
-  category: CategoryId
+  category: StoreCategoryId
+  /** The category name the seller picked, shown instead of the generic one when set */
+  categoryLabel?: string
   country: string
   city: string
   /** Counted from the product catalogue, so it can never disagree with the storefront */
@@ -96,6 +101,8 @@ export interface StoreSocialLink {
 /** Everything the storefront shows beyond the basic Store fields. */
 export interface StoreDetails {
   slug: string
+  /** True for stores made through seller onboarding in this browser (demo) */
+  userCreated?: boolean
   /** Story paragraphs, in reading order */
   story: string[]
   seller: StoreSeller

@@ -62,7 +62,7 @@ export default function StoreAbout({ store, details }: StoreAboutProps) {
             {seller.name}
           </h3>
           <p className="text-sm text-muted">{seller.role}</p>
-          <p className="mt-3 text-sm leading-7 text-muted">{seller.bio}</p>
+          {seller.bio !== '' && <p className="mt-3 text-sm leading-7 text-muted">{seller.bio}</p>}
         </section>
 
         <div className="grid gap-5 sm:grid-cols-2">
@@ -74,6 +74,7 @@ export default function StoreAbout({ store, details }: StoreAboutProps) {
           </Card>
         </div>
 
+        {policies.payments.length > 0 && (
         <Card icon={CreditCard} title="Accepted payments">
           <ul className="flex flex-wrap gap-2">
             {policies.payments.map((payment) => (
@@ -86,6 +87,7 @@ export default function StoreAbout({ store, details }: StoreAboutProps) {
             ))}
           </ul>
         </Card>
+        )}
       </div>
 
       <aside className="space-y-5 self-start">
@@ -142,7 +144,9 @@ export default function StoreAbout({ store, details }: StoreAboutProps) {
         )}
 
         <p className="px-1 text-xs leading-5 text-muted">
-          Sample content for design preview. This is not a real business.
+          {details.userCreated
+            ? 'Demo store made with seller onboarding. Nothing here has been verified.'
+            : 'Sample content for design preview. This is not a real business.'}
         </p>
       </aside>
     </div>

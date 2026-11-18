@@ -6,8 +6,10 @@ import type {
   ProductSpec,
   ProductVideo,
 } from '../types/productDetails'
+import type { SellerProductRecord } from '../types/seller'
 import { slugify } from '../utils/slug'
-import { PRODUCTS } from './products'
+import { productRegistry } from '../services/productRegistry'
+import { getPublicProducts } from './catalog'
 import { getStoreDetails } from './storeDetails'
 import { getStoreByName } from './stores'
 
@@ -317,7 +319,8 @@ const EXTRAS: Record<number, Extra> = {
 /* ---------- Slugs ---------- */
 
 export function getProductSlug(product: Product): string {
-  return slugify(product.name)
+  // Seller products keep the unique address they were given when they were made
+  return productRegistry.getById(product.id)?.slug ?? slugify(product.name)
 }
 
 export function getProductPath(product: Product): string {
@@ -326,7 +329,7 @@ export function getProductPath(product: Product): string {
 
 export function getProductBySlug(slug: string | undefined): Product | undefined {
   if (slug === undefined) return undefined
-  return PRODUCTS.find((product) => getProductSlug(product) === slug)
+  return getPublicProducts().find((product) => getProductSlug(product) === slug)
 }
 
 /* ---------- Gallery ---------- */
@@ -360,7 +363,39 @@ function buildGallery(product: Product, extra: Extra | undefined): ProductImage[
 
 /* ---------- Public API ---------- */
 
+function getSellerProductDetails(product: Product, record: SellerProductRecord): ProductDetails {
+  const store = getStoreByName(product.store)
+  const policies = store ? getStoreDetails(store.slug)?.policies : undefined
+  const specs: ProductSpec[] = []
+  if (record.weight !== '') specs.push({ label: 'Weight', value: record.weight })
+  if (record.dimensions !== '') specs.push({ label: 'Dimensions', value: record.dimensions })
+
+  return {
+    sku: record.sku !== '' ? record.sku : `FAI-${String(record.id).padStart(4, '0')}`,
+    brand: record.brand !== '' ? record.brand : undefined,
+    summary: record.shortDescription,
+    description: record.description,
+    features: [],
+    specs,
+    options: [
+      ...(record.sizes.length > 0 ? [option('size', 'Size', record.sizes)] : []),
+      ...(record.colors.length > 0 ? [option('color', 'Color', record.colors)] : []),
+    ],
+    gallery: record.images.map((src, index) => ({
+      src,
+      full: src,
+      alt: index === 0 ? record.name : `${record.name}, view ${index + 1}`,
+    })),
+    stock: record.stock,
+    shipping: record.shipping !== '' ? record.shipping : policies?.shipping,
+    returns: policies?.returns,
+  }
+}
+
 export function getProductDetails(product: Product): ProductDetails {
+  const record = productRegistry.getById(product.id)
+  if (record) return getSellerProductDetails(product, record)
+
   const extra = EXTRAS[product.id]
   const store = getStoreByName(product.store)
   const policies = store ? getStoreDetails(store.slug)?.policies : undefined
@@ -392,11 +427,11 @@ export function getRelatedProducts(product: Product, limit = 4): Product[] {
     (other.store === product.store ? 20 : 0) -
     Math.abs(other.price - product.price) / 10
 
-  return PRODUCTS.filter((other) => other.id !== product.id)
+  return getPublicProducts().filter((other) => other.id !== product.id)
     .sort((a, b) => score(b) - score(a))
     .slice(0, limit)
 }
 
 export function getProductById(id: number): Product | undefined {
-  return PRODUCTS.find((product) => product.id === id)
+  return getPublicProducts().find((product) => product.id === id)
 }

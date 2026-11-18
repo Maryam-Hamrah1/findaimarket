@@ -41,7 +41,7 @@ const footerLinks = [
     title: 'Marketplace',
     links: [
       { name: 'Explore Products', href: '/explore' },
-      { name: 'Categories', href: '/categories' },
+      { name: 'Categories', href: '/explore' },
       { name: 'Popular Stores', href: '/stores' },
       { name: 'Featured Products', href: '/explore' },
     ],

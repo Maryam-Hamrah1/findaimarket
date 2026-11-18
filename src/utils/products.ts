@@ -151,7 +151,7 @@ function scoreProduct(product: Product, keywords: string[]): number {
 }
 
 /** Returns the products that fit the request, best fit first. */
-export function matchProducts(products: Product[], parsed: ParsedQuery): ScoredProduct[] {
+export function matchProducts(products: readonly Product[], parsed: ParsedQuery): ScoredProduct[] {
   const inBudget = products.filter(
     (product) =>
       (parsed.minPrice === null || product.price >= parsed.minPrice) &&
@@ -184,7 +184,7 @@ export function matchProducts(products: Product[], parsed: ParsedQuery): ScoredP
    --------------------------------------------------------- */
 
 export function filterProducts(
-  products: Product[],
+  products: readonly Product[],
   filters: ProductFilters,
   category: CategoryFilter,
 ): Product[] {
@@ -212,7 +212,7 @@ export function filterProducts(
 }
 
 export function sortProducts(
-  products: Product[],
+  products: readonly Product[],
   sort: SortOption,
   scores: Map<number, number>,
 ): Product[] {
@@ -241,7 +241,7 @@ export function sortProducts(
   }
 }
 
-export function countByCategory(products: Product[]): Record<CategoryFilter, number> {
+export function countByCategory(products: readonly Product[]): Record<CategoryFilter, number> {
   const counts: Record<CategoryFilter, number> = {
     all: products.length,
     fashion: 0,
@@ -259,7 +259,7 @@ export function countByCategory(products: Product[]): Record<CategoryFilter, num
   return counts
 }
 
-export function getLocations(products: Product[]): string[] {
+export function getLocations(products: readonly Product[]): string[] {
   return Array.from(new Set(products.map((product) => product.location))).sort()
 }
 

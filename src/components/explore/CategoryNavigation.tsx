@@ -9,7 +9,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { useEffect, useRef } from 'react'
-import { CATEGORIES } from '../../data/categories'
+import { CATEGORIES, type CategoryMeta } from '../../data/categories'
 import type { CategoryFilter } from '../../types/product'
 
 const ICONS: Record<CategoryFilter, LucideIcon> = {
@@ -26,12 +26,16 @@ interface CategoryNavigationProps {
   active: CategoryFilter
   counts: Record<CategoryFilter, number>
   onSelect: (category: CategoryFilter) => void
+  items?: ReadonlyArray<CategoryMeta>
+  label?: string
 }
 
 export default function CategoryNavigation({
   active,
   counts,
   onSelect,
+  items = CATEGORIES,
+  label = 'Product categories',
 }: CategoryNavigationProps) {
   const listRef = useRef<HTMLUListElement>(null)
 
@@ -42,12 +46,12 @@ export default function CategoryNavigation({
   }, [active])
 
   return (
-    <nav aria-label="Product categories">
+    <nav aria-label={label}>
       <ul
         ref={listRef}
         className="no-scrollbar -mx-5 flex gap-3 overflow-x-auto px-5 py-1"
       >
-        {CATEGORIES.map((category) => {
+        {items.map((category) => {
           const Icon = ICONS[category.id]
           const isActive = active === category.id
 

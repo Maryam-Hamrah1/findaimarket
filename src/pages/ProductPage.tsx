@@ -1,3 +1,4 @@
+import { useCatalog } from '../hooks/useCatalog'
 import { useEffect, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import ProductBuyBox from '../components/product/ProductBuyBox'
@@ -99,6 +100,7 @@ function ProductView({ product }: { product: Product }) {
 
 export default function ProductPage() {
   const { slug } = useParams()
+  useCatalog() // re-render when a seller changes or hides this product
   const product = getProductBySlug(slug)
 
   useEffect(() => {

@@ -4,12 +4,12 @@ import type {
   Country,
   ShippingAddress,
 } from '../types/checkout'
+import { isValidEmail } from './validation'
 
 /* ---------------------------------------------------------
    Address cleaning and validation (pure, no UI)
    --------------------------------------------------------- */
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 const PHONE_CHARS = /^\+?[\d\s().-]+$/
 
 /**
@@ -64,7 +64,7 @@ export function validateAddress(input: ShippingAddress): AddressErrors {
 
   if (address.email === '') {
     errors.email = 'Enter your email address.'
-  } else if (!EMAIL_PATTERN.test(address.email)) {
+  } else if (!isValidEmail(address.email)) {
     errors.email = 'Enter a valid email address, like name@example.com.'
   }
 

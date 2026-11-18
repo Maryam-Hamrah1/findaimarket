@@ -12,31 +12,37 @@ import SectionHeading from '../ui/SectionHeading'
 
 const categories = [
   {
+    id: 'fashion',
     name: 'Fashion',
     description: 'Clothing & accessories',
     icon: Shirt,
   },
   {
+    id: 'electronics',
     name: 'Electronics',
     description: 'Gadgets & technology',
     icon: Smartphone,
   },
   {
+    id: 'accessories',
     name: 'Accessories',
     description: 'Watches & jewelry',
     icon: Watch,
   },
   {
+    id: 'home-living',
     name: 'Home & Living',
     description: 'Make your space beautiful',
     icon: Home,
   },
   {
+    id: 'beauty',
     name: 'Beauty',
     description: 'Beauty & personal care',
     icon: Sparkles,
   },
   {
+    id: 'sports',
     name: 'Sports',
     description: 'Fitness & outdoor',
     icon: Dumbbell,
@@ -53,7 +59,7 @@ export default function CategoriesSection() {
           title="Browse the way you think"
           description="Explore different categories and discover products that match your style and needs."
           linkText="View All"
-          linkTo="/categories"
+          linkTo="/explore"
         />
 
         {/* Category Cards */}
@@ -64,7 +70,7 @@ export default function CategoriesSection() {
             return (
               <Link
                 key={category.name}
-                to={`/categories/${category.name.toLowerCase().replaceAll(' ', '-')}`}
+                to={`/explore?category=${category.id}`}
                 className="group flex flex-col items-center rounded-3xl border border-brand-border bg-surface p-5 text-center transition-all duration-300 hover:-translate-y-1 hover:border-accent hover:shadow-card sm:p-6"
               >
                 <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-light text-foreground transition-colors duration-300 group-hover:bg-accent group-hover:text-on-accent">

@@ -11,7 +11,8 @@ import StoresHeader from '../components/stores/StoresHeader'
 import FilterChips, { type FilterChip } from '../components/ui/FilterChips'
 import ResultsToolbar from '../components/ui/ResultsToolbar'
 import { getCategoryName, isCategoryId } from '../data/categories'
-import { SAMPLE_DATA_NOTICE, STORES, STORE_CATEGORY_ITEMS } from '../data/stores'
+import { SAMPLE_DATA_NOTICE, STORE_CATEGORY_ITEMS } from '../data/stores'
+import { useStores } from '../hooks/useStores'
 import type { CategoryFilter } from '../types/product'
 import type { StoreFilters, StoreSortOption } from '../types/store'
 import { toggleItem } from '../utils/collections'
@@ -28,10 +29,10 @@ import {
   sortStores,
 } from '../utils/stores'
 
-const ALL_COUNTRIES = getStoreCountries(STORES)
-
 export default function StoresPage() {
   const [searchParams, setSearchParams] = useSearchParams()
+  const STORES = useStores()
+  const ALL_COUNTRIES = useMemo(() => getStoreCountries(STORES), [STORES])
 
   const query = (searchParams.get('q') ?? '').trim()
   const categoryParam = searchParams.get('category')
@@ -50,7 +51,7 @@ export default function StoresPage() {
 
   /* ---------- Data pipeline ---------- */
 
-  const searched = useMemo(() => searchStores(STORES, query), [query])
+  const searched = useMemo(() => searchStores(STORES, query), [STORES, query])
 
   // Counts respect the other filters, so the numbers stay honest
   const categoryCounts = useMemo(

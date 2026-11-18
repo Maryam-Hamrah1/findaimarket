@@ -1,8 +1,7 @@
 import { ArrowRight, BadgeCheck, MapPin, Package, Star, Users } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { getCategoryName } from '../../data/categories'
 import type { Store } from '../../types/store'
-import { formatCompactNumber } from '../../utils/stores'
+import { formatCompactNumber, getStoreCategoryLabel } from '../../utils/stores'
 import CoverImage from '../ui/CoverImage'
 import StoreLogo from '../ui/StoreLogo'
 
@@ -25,7 +24,7 @@ export default function StoreCard({ store }: StoreCardProps) {
         />
 
         <p className="mt-3 text-xs font-semibold uppercase tracking-[0.14em] text-accent">
-          {getCategoryName(store.category)}
+          {getStoreCategoryLabel(store)}
         </p>
 
         <h3 className="mt-1 flex items-center gap-2 font-display text-2xl font-semibold leading-tight text-foreground">

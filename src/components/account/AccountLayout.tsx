@@ -1,6 +1,8 @@
-import { Heart, Package, UserRound } from 'lucide-react'
+import { Heart, Package, Store, UserRound } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
+import { useAuth } from '../../hooks/useAuth'
+import { useMyStore } from '../../hooks/useStores'
 import Breadcrumb from '../ui/Breadcrumb'
 
 const LINKS = [
@@ -16,6 +18,12 @@ interface AccountLayoutProps {
 
 /** Shared frame for the account pages: breadcrumb, heading and side navigation. */
 export default function AccountLayout({ title, children }: AccountLayoutProps) {
+  const { hasRole } = useAuth()
+  const myStore = useMyStore()
+  const links = hasRole('seller')
+    ? [...LINKS, { to: '/account/store', label: myStore ? 'My store' : 'Set up my store', icon: Store, end: false }]
+    : LINKS
+
   return (
     <main>
       <div className="mx-auto max-w-7xl px-5 pb-16 pt-6 lg:pt-8">
@@ -25,7 +33,7 @@ export default function AccountLayout({ title, children }: AccountLayoutProps) {
 
         <div className="mt-8 grid items-start gap-8 lg:grid-cols-[220px_1fr]">
           <nav aria-label="Account" className="flex gap-2 overflow-x-auto lg:flex-col">
-            {LINKS.map((link) => {
+            {links.map((link) => {
               const Icon = link.icon
               return (
                 <NavLink

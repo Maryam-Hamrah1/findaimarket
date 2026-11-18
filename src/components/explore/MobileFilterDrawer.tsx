@@ -1,5 +1,6 @@
 import { X } from 'lucide-react'
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useRef, type ReactNode } from 'react'
+import { useDialog } from '../../hooks/useDialog'
 import Button from '../ui/Button'
 
 interface MobileFilterDrawerProps {
@@ -9,6 +10,8 @@ interface MobileFilterDrawerProps {
   activeCount: number
   onClearAll: () => void
   children: ReactNode
+  /** What is being listed, e.g. "product" or "store" */
+  noun?: string
 }
 
 /** Slide-in filter panel for screens below the lg breakpoint. */
@@ -19,33 +22,11 @@ export default function MobileFilterDrawer({
   activeCount,
   onClearAll,
   children,
+  noun = 'product',
 }: MobileFilterDrawerProps) {
-  const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    if (!open) return
-
-    const previouslyFocused = document.activeElement
-    const previousOverflow = document.body.style.overflow
-
-    document.body.style.overflow = 'hidden'
-    closeButtonRef.current?.focus()
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose()
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-      document.body.style.overflow = previousOverflow
-
-      if (previouslyFocused instanceof HTMLElement) {
-        previouslyFocused.focus()
-      }
-    }
-  }, [open, onClose])
+  useDialog(open, onClose, panelRef)
 
   if (!open) return null
 
@@ -60,9 +41,11 @@ export default function MobileFilterDrawer({
 
       {/* Panel */}
       <div
+        ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-label="Filters"
+        tabIndex={-1}
         className="drawer-panel absolute inset-y-0 left-0 flex w-[90%] max-w-sm flex-col border-r border-brand-border bg-surface"
       >
         <div className="flex items-center justify-between border-b border-brand-border px-5 py-4">
@@ -71,7 +54,6 @@ export default function MobileFilterDrawer({
           </h2>
 
           <button
-            ref={closeButtonRef}
             type="button"
             onClick={onClose}
             aria-label="Close filters"
@@ -93,7 +75,7 @@ export default function MobileFilterDrawer({
           </Button>
 
           <Button variant="secondary" fullWidth onClick={onClose}>
-            Show {resultCount} {resultCount === 1 ? 'product' : 'products'}
+            Show {resultCount} {resultCount === 1 ? noun : `${noun}s`}
           </Button>
         </div>
       </div>

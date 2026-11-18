@@ -9,9 +9,9 @@ import FilterSidebar from '../components/explore/FilterSidebar'
 import MobileFilterDrawer from '../components/explore/MobileFilterDrawer'
 import Pagination from '../components/explore/Pagination'
 import ProductGrid from '../components/explore/ProductGrid'
-import ProductToolbar from '../components/explore/ProductToolbar'
+import ResultsToolbar from '../components/ui/ResultsToolbar'
 import { isCategoryId } from '../data/categories'
-import { PRODUCTS } from '../data/products'
+import { useCatalog } from '../hooks/useCatalog'
 import type {
   CategoryFilter,
   ProductFilters,
@@ -30,8 +30,6 @@ import {
   sortProducts,
 } from '../utils/products'
 
-const ALL_LOCATIONS = getLocations(PRODUCTS)
-
 const SEARCH_SUGGESTIONS = [
   'A warm gift for my mother',
   'Running shoes under $100',
@@ -41,6 +39,8 @@ const SEARCH_SUGGESTIONS = [
 const TOP_MATCH_COUNT = 3
 
 export default function ExplorePage() {
+  const PRODUCTS = useCatalog()
+  const ALL_LOCATIONS = useMemo(() => getLocations(PRODUCTS), [PRODUCTS])
   const [searchParams, setSearchParams] = useSearchParams()
 
   const query = (searchParams.get('q') ?? '').trim()
@@ -71,7 +71,7 @@ export default function ExplorePage() {
       hasQuery
         ? matchProducts(PRODUCTS, parsed)
         : PRODUCTS.map((product) => ({ product, score: 0 })),
-    [hasQuery, parsed],
+    [hasQuery, parsed, PRODUCTS],
   )
 
   const matchedProducts = useMemo(
@@ -229,7 +229,7 @@ export default function ExplorePage() {
           </FilterSidebar>
 
           <div ref={resultsRef} className="min-w-0 flex-1 scroll-mt-28">
-            <ProductToolbar
+            <ResultsToolbar
               rangeStart={total === 0 ? 0 : pageStart + 1}
               rangeEnd={pageStart + pageProducts.length}
               total={total}
@@ -238,6 +238,7 @@ export default function ExplorePage() {
               onSortChange={handleSortChange}
               onOpenFilters={() => setDrawerOpen(true)}
               activeFilterCount={activeCount}
+              sortId="explore-sort"
             />
 
             <ActiveFilters

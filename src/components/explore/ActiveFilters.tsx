@@ -1,6 +1,7 @@
-import { X } from 'lucide-react'
 import { getCategoryName } from '../../data/categories'
 import type { CategoryFilter, ProductFilters } from '../../types/product'
+import { toggleItem } from '../../utils/collections'
+import FilterChips, { type FilterChip } from '../ui/FilterChips'
 
 interface ActiveFiltersProps {
   filters: ProductFilters
@@ -10,12 +11,6 @@ interface ActiveFiltersProps {
   onClear: () => void
 }
 
-interface Chip {
-  key: string
-  label: string
-  onRemove: () => void
-}
-
 const LABELS = {
   'in-stock': 'In Stock',
   'out-of-stock': 'Out of Stock',
@@ -23,7 +18,7 @@ const LABELS = {
   used: 'Used',
 } as const
 
-function describePrice(min: number | null, max: number | null): string {
+export function describePrice(min: number | null, max: number | null): string {
   if (min !== null && max !== null) return `$${min} – $${max}`
   if (min !== null) return `Over $${min}`
   return `Under $${max ?? 0}`
@@ -37,7 +32,7 @@ export default function ActiveFilters({
   onCategoryChange,
   onClear,
 }: ActiveFiltersProps) {
-  const chips: Chip[] = []
+  const chips: FilterChip[] = []
 
   if (category !== 'all') {
     chips.push({
@@ -70,7 +65,7 @@ export default function ActiveFilters({
       onRemove: () =>
         onFiltersChange({
           ...filters,
-          availability: filters.availability.filter((item) => item !== value),
+          availability: toggleItem(filters.availability, value),
         }),
     })
   }
@@ -82,7 +77,7 @@ export default function ActiveFilters({
       onRemove: () =>
         onFiltersChange({
           ...filters,
-          conditions: filters.conditions.filter((item) => item !== value),
+          conditions: toggleItem(filters.conditions, value),
         }),
     })
   }
@@ -94,35 +89,10 @@ export default function ActiveFilters({
       onRemove: () =>
         onFiltersChange({
           ...filters,
-          locations: filters.locations.filter((item) => item !== location),
+          locations: toggleItem(filters.locations, location),
         }),
     })
   }
 
-  if (chips.length === 0) return null
-
-  return (
-    <div className="mt-4 flex flex-wrap items-center gap-2">
-      {chips.map((chip) => (
-        <button
-          key={chip.key}
-          type="button"
-          onClick={chip.onRemove}
-          aria-label={`Remove filter: ${chip.label}`}
-          className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-brand-border bg-surface pl-3.5 pr-2.5 text-xs font-semibold text-foreground transition-colors hover:border-accent"
-        >
-          {chip.label}
-          <X size={14} className="text-muted" />
-        </button>
-      ))}
-
-      <button
-        type="button"
-        onClick={onClear}
-        className="ml-1 min-h-9 text-xs font-semibold text-accent hover:text-accent-hover"
-      >
-        Clear all
-      </button>
-    </div>
-  )
+  return <FilterChips chips={chips} onClear={onClear} />
 }

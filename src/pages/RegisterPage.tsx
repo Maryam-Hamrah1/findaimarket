@@ -76,8 +76,8 @@ export default function RegisterPage() {
       return
     }
 
-    // Sellers continue to their (placeholder) area, buyers to where they were going
-    const target = seller ? '/seller/dashboard' : destinationAfterSignIn(result.value.roles, from)
+    // Sellers continue to store setup, buyers to where they were going
+    const target = seller ? '/seller/onboarding' : destinationAfterSignIn(result.value.roles, from)
     navigate(target, { replace: true })
   }
 

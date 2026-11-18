@@ -38,6 +38,8 @@ export interface ProductDetails {
   /** Only shown when provided */
   brand?: string
   summary: string
+  /** Longer text some sellers add. Shown under the summary when present. */
+  description?: string
   features: string[]
   specs: ProductSpec[]
   /** Empty when the product has no variations */

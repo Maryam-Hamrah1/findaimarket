@@ -28,6 +28,11 @@ export const EMPTY_STORE_FILTERS: StoreFilters = {
   newOnly: false,
 }
 
+/** What to show as the store's category: the seller's own wording when there is one. */
+export function getStoreCategoryLabel(store: Store): string {
+  return store.categoryLabel ?? getCategoryName(store.category)
+}
+
 export function isPopularStore(store: Store): boolean {
   return store.followers >= POPULAR_FOLLOWERS
 }
@@ -55,7 +60,7 @@ function searchableText(store: Store): string {
   return [
     store.name,
     store.description,
-    getCategoryName(store.category),
+    getStoreCategoryLabel(store),
     store.category.replace('-', ' '),
     store.country,
     store.city,
@@ -140,7 +145,7 @@ export function countStoresByCategory(
   }
 
   for (const store of stores) {
-    counts[store.category] += 1
+    if (store.category !== 'other') counts[store.category] += 1
   }
 
   return counts

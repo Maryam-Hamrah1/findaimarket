@@ -6,9 +6,11 @@ interface StoreStatsProps {
   store: Store
   /** Follower count including the visitor's own follow */
   followers: number
+  /** Made by a seller in this browser: figures are real zeros, not sample numbers */
+  userCreated?: boolean
 }
 
-export default function StoreStats({ store, followers }: StoreStatsProps) {
+export default function StoreStats({ store, followers, userCreated = false }: StoreStatsProps) {
   const items = [
     { label: 'Products', value: String(store.productCount) },
     { label: 'Average rating', value: store.rating.toFixed(1), star: true },
@@ -32,7 +34,9 @@ export default function StoreStats({ store, followers }: StoreStatsProps) {
         ))}
       </dl>
       <p className="mt-2 text-center text-xs text-muted">
-        Sample figures for design preview, not verified business data.
+        {userCreated
+          ? 'New demo store. Nothing has been verified.'
+          : 'Sample figures for design preview, not verified business data.'}
       </p>
     </section>
   )

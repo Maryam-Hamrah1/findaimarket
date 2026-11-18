@@ -8,7 +8,7 @@ interface ProductDescriptionProps {
 
 /** Description, key features, specifications, shipping and returns. Empty parts are left out. */
 export default function ProductDescription({ name, details }: ProductDescriptionProps) {
-  const { summary, features, specs, shipping, returns } = details
+  const { summary, description, features, specs, shipping, returns } = details
 
   return (
     <section aria-labelledby="details-heading" className="space-y-10">
@@ -22,6 +22,9 @@ export default function ProductDescription({ name, details }: ProductDescription
             Description
           </h3>
           <p className="mt-3 text-base leading-7 text-muted">{summary}</p>
+          {description && (
+            <p className="mt-3 whitespace-pre-line text-base leading-7 text-muted">{description}</p>
+          )}
 
           {features.length > 0 && (
             <>

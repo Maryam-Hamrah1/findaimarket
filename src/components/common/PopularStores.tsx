@@ -1,39 +1,23 @@
-import { ArrowRight, MapPin } from 'lucide-react'
+import { ArrowRight, BadgeCheck, MapPin } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { getStoreBySlug } from '../../data/stores'
+import { getStoreCategoryLabel } from '../../utils/stores'
+import type { Store } from '../../types/store'
+import CoverImage from '../ui/CoverImage'
 import SectionHeading from '../ui/SectionHeading'
+import StoreLogo from '../ui/StoreLogo'
 
-const stores = [
-  {
-    id: 1,
-    name: 'Modern Style',
-    category: 'Fashion & Accessories',
-    location: 'United Kingdom',
-    image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600',
-    logo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200',
-  },
-  {
-    id: 2,
-    name: 'Tech Haven',
-    category: 'Electronics & Gadgets',
-    location: 'United States',
-    image: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=600',
-    logo: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200',
-  },
-  {
-    id: 3,
-    name: 'Home Essence',
-    category: 'Home & Living',
-    location: 'Germany',
-    image: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=600',
-    logo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200',
-  },
-]
+const FEATURED_SLUGS = ['modern-style', 'tech-haven', 'home-essence']
+
+const featuredStores: Store[] = FEATURED_SLUGS.flatMap((slug) => {
+  const store = getStoreBySlug(slug)
+  return store ? [store] : []
+})
 
 export default function PopularStores() {
   return (
     <section className="px-5 py-20">
       <div className="mx-auto max-w-7xl">
-
         <SectionHeading
           eyebrow="Independent Stores"
           title="Real shops, one marketplace"
@@ -42,55 +26,48 @@ export default function PopularStores() {
           linkTo="/stores"
         />
 
-        {/* Store Cards */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {stores.map((store) => (
+          {featuredStores.map((store) => (
             <article
               key={store.id}
-              className="group overflow-hidden rounded-3xl border border-brand-border bg-surface transition-all duration-300 hover:-translate-y-1 hover:border-accent/60 hover:shadow-card"
+              className="group relative overflow-hidden rounded-3xl border border-brand-border bg-surface transition-all duration-300 hover:-translate-y-1 hover:border-accent/60 hover:shadow-card"
             >
-              <div className="relative h-48 overflow-hidden">
-                <img
-                  src={store.image}
-                  alt={store.name}
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-              </div>
+              <CoverImage src={store.coverImage} className="h-48" />
 
-              <div className="relative px-5 pb-5">
-                <img
-                  src={store.logo}
-                  alt={`${store.name} logo`}
-                  className="-mt-10 h-16 w-16 rounded-xl border-4 border-surface object-cover shadow-card"
-                />
+              <div className="px-5 pb-5">
+                <StoreLogo name={store.name} logo={store.logo} className="-mt-10" />
 
-                <h3 className="mt-3 font-display text-2xl font-semibold text-foreground">
+                <h3 className="mt-3 flex items-center gap-2 font-display text-2xl font-semibold text-foreground">
                   {store.name}
+                  {store.verified && (
+                    <span className="text-accent" title="Verified store">
+                      <BadgeCheck size={20} aria-hidden="true" />
+                      <span className="sr-only">Verified store</span>
+                    </span>
+                  )}
                 </h3>
 
-                <p className="mt-1 text-sm text-muted">
-                  {store.category}
-                </p>
+                <p className="mt-1 text-sm text-muted">{getStoreCategoryLabel(store)}</p>
 
                 <div className="mt-4 flex items-center justify-between gap-3 border-t border-brand-border pt-4">
                   <span className="flex items-center gap-1.5 text-xs text-muted">
-                    <MapPin size={15} />
-                    {store.location}
+                    <MapPin size={15} aria-hidden="true" />
+                    {store.country}
                   </span>
 
                   <Link
-                    to={`/store/${store.id}`}
-                    className="inline-flex items-center gap-1 text-sm font-semibold text-foreground hover:text-accent"
+                    to={`/store/${store.slug}`}
+                    className="inline-flex items-center gap-1 text-sm font-semibold text-foreground after:absolute after:inset-0 after:content-[''] hover:text-accent"
                   >
                     Visit Store
-                    <ArrowRight size={15} />
+                    <span className="sr-only"> {store.name}</span>
+                    <ArrowRight size={15} aria-hidden="true" />
                   </Link>
                 </div>
               </div>
             </article>
           ))}
         </div>
-
       </div>
     </section>
   )

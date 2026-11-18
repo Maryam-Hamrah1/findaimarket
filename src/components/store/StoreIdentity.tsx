@@ -9,10 +9,9 @@ import {
   Share2,
   Tag,
 } from 'lucide-react'
-import { getCategoryName } from '../../data/categories'
 import { useShareLink } from '../../hooks/useShareLink'
 import type { Store } from '../../types/store'
-import { formatMonthYear } from '../../utils/stores'
+import { formatMonthYear, getStoreCategoryLabel } from '../../utils/stores'
 import Button from '../ui/Button'
 import StoreLogo from '../ui/StoreLogo'
 
@@ -62,7 +61,7 @@ export default function StoreIdentity({
           <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted">
             <li className="flex items-center gap-1.5">
               <Tag size={15} aria-hidden="true" />
-              {getCategoryName(store.category)}
+              {getStoreCategoryLabel(store)}
             </li>
             <li className="flex items-center gap-1.5">
               <MapPin size={15} aria-hidden="true" />

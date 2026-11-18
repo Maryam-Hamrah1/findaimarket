@@ -1,7 +1,8 @@
-import { ChevronDown, Heart, LayoutDashboard, LogOut, Package, UserRound } from 'lucide-react'
+import { ChevronDown, Heart, LayoutDashboard, LogOut, Package, Store, UserRound } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
+import { useMyStore } from '../../hooks/useStores'
 
 function initials(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean)
@@ -12,6 +13,7 @@ function initials(name: string): string {
 export default function UserMenu() {
   const { user, logout, hasRole } = useAuth()
   const navigate = useNavigate()
+  const myStore = useMyStore()
   const [open, setOpen] = useState(false)
   const root = useRef<HTMLDivElement>(null)
   const button = useRef<HTMLButtonElement>(null)
@@ -39,10 +41,17 @@ export default function UserMenu() {
   if (!user) return null
 
   const items = [
-    { to: '/account', label: 'My Account', icon: UserRound },
+    { to: '/account', label: 'Account Settings', icon: UserRound },
     { to: '/account/orders', label: 'My Orders', icon: Package },
     { to: '/account/wishlist', label: 'Wishlist', icon: Heart },
-    ...(hasRole('seller') ? [{ to: '/seller/dashboard', label: 'Seller Dashboard', icon: LayoutDashboard }] : []),
+    ...(hasRole('seller')
+      ? myStore
+        ? [
+            { to: `/store/${myStore.store.slug}`, label: 'My Store', icon: Store },
+            { to: '/seller/dashboard', label: 'Seller Dashboard', icon: LayoutDashboard },
+          ]
+        : [{ to: '/seller/onboarding', label: 'Set Up My Store', icon: Store }]
+      : []),
   ]
 
   const itemClass =

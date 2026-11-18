@@ -10,7 +10,17 @@ import AccountWishlistPage from './pages/AccountWishlistPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
-import SellerDashboardPage from './pages/SellerDashboardPage'
+import AccountStorePage from './pages/AccountStorePage'
+import SellerOnboardingPage from './pages/SellerOnboardingPage'
+import SellerStoreGuard from './components/seller/SellerStoreGuard'
+import AnalyticsPage from './pages/seller/AnalyticsPage'
+import CustomersPage from './pages/seller/CustomersPage'
+import InventoryPage from './pages/seller/InventoryPage'
+import OrdersPage from './pages/seller/OrdersPage'
+import OverviewPage from './pages/seller/OverviewPage'
+import ProductFormPage from './pages/seller/ProductFormPage'
+import ProductsPage from './pages/seller/ProductsPage'
+import SettingsPage from './pages/seller/SettingsPage'
 import CheckoutPage from './pages/CheckoutPage'
 import ComingSoonPage from './pages/ComingSoonPage'
 import CartPage from './pages/CartPage'
@@ -52,7 +62,19 @@ function App() {
         <Route path="/account/orders" element={<ProtectedRoute><AccountOrdersPage /></ProtectedRoute>} />
         <Route path="/account/wishlist" element={<ProtectedRoute><AccountWishlistPage /></ProtectedRoute>} />
         <Route path="/seller/register" element={<Navigate to="/register?type=seller" replace />} />
-        <Route path="/seller/dashboard" element={<ProtectedRoute role="seller"><SellerDashboardPage /></ProtectedRoute>} />
+        <Route path="/account/store" element={<ProtectedRoute role="seller"><AccountStorePage /></ProtectedRoute>} />
+        <Route path="/seller/onboarding" element={<ProtectedRoute role="seller"><SellerOnboardingPage /></ProtectedRoute>} />
+        <Route path="/seller/dashboard" element={<ProtectedRoute role="seller"><SellerStoreGuard /></ProtectedRoute>}>
+          <Route index element={<OverviewPage />} />
+          <Route path="products" element={<ProductsPage />} />
+          <Route path="products/new" element={<ProductFormPage />} />
+          <Route path="products/:productId/edit" element={<ProductFormPage />} />
+          <Route path="orders" element={<OrdersPage />} />
+          <Route path="inventory" element={<InventoryPage />} />
+          <Route path="customers" element={<CustomersPage />} />
+          <Route path="analytics" element={<AnalyticsPage />} />
+          <Route path="settings" element={<SettingsPage />} />
+        </Route>
         <Route path="*" element={<ComingSoonPage />} />
       </Routes>
 

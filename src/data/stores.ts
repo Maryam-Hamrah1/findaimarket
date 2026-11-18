@@ -1,6 +1,9 @@
 import type { RatingBreakdown, Store } from '../types/store'
 import type { CategoryMeta } from './categories'
+import type { StoreRecord } from '../types/onboarding'
+import { storeRegistry } from '../services/storeRegistry'
 import { PRODUCTS } from './products'
+import { getPublicProducts } from './catalog'
 
 /*
   Sample stores (mock data, no backend yet).
@@ -132,12 +135,42 @@ export const STORES: ReadonlyArray<Store> = SEEDS.map((seed) => {
   }
 })
 
+let combinedStores: ReadonlyArray<StoreRecord> | null = null
+let combinedProducts: ReadonlyArray<unknown> | null = null
+let combined: ReadonlyArray<Store> = STORES
+
+/**
+ * Sample stores plus the ones sellers created in this browser. The list keeps
+ * the same identity until a store or a product changes, so it is safe to subscribe to.
+ */
+export function getAllStores(): ReadonlyArray<Store> {
+  const created = storeRegistry.list()
+  const products = getPublicProducts()
+
+  if (created !== combinedStores || products !== combinedProducts) {
+    combinedStores = created
+    combinedProducts = products
+    combined =
+      created.length === 0
+        ? STORES
+        : [
+            ...STORES,
+            // A seller's product count always comes from the shared catalogue
+            ...created.map((record) => ({
+              ...record.store,
+              productCount: products.filter((product) => product.store === record.store.name).length,
+            })),
+          ]
+  }
+  return combined
+}
+
 export function getStoreBySlug(slug: string | undefined): Store | undefined {
-  return slug === undefined ? undefined : STORES.find((store) => store.slug === slug)
+  return slug === undefined ? undefined : getAllStores().find((store) => store.slug === slug)
 }
 
 export function getStoreByName(name: string): Store | undefined {
-  return STORES.find((store) => store.name === name)
+  return getAllStores().find((store) => store.name === name)
 }
 
 /** Category tabs of the directory, in the order the design uses. */

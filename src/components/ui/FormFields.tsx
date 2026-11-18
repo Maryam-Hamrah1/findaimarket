@@ -1,5 +1,5 @@
 import { ChevronDown } from 'lucide-react'
-import type { InputHTMLAttributes, ReactNode, SelectHTMLAttributes } from 'react'
+import type { InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from 'react'
 
 /* Labelled form controls with required marker, hint and error message. */
 
@@ -156,6 +156,61 @@ export function SelectField({
           aria-hidden="true"
         />
       </div>
+    </FieldShell>
+  )
+}
+
+interface TextAreaFieldProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+  id: string
+  label: string
+  required?: boolean
+  error?: string
+  hint?: string
+  containerClassName?: string
+  /** Shows "12 / 500" under the field */
+  maxCharacters?: number
+}
+
+export function TextAreaField({
+  id,
+  label,
+  required = false,
+  error,
+  hint,
+  containerClassName,
+  maxCharacters,
+  className = '',
+  value,
+  ...area
+}: TextAreaFieldProps) {
+  const length = typeof value === 'string' ? value.length : 0
+
+  return (
+    <FieldShell
+      id={id}
+      label={label}
+      required={required}
+      error={error}
+      hint={hint}
+      className={containerClassName}
+    >
+      <textarea
+        id={id}
+        value={value}
+        aria-required={required}
+        aria-invalid={Boolean(error)}
+        aria-describedby={describedBy(id, error, hint)}
+        className={`${CONTROL} min-h-28 resize-y py-3 leading-6 ${error ? 'border-danger' : 'border-brand-border'} ${className}`}
+        {...area}
+      />
+      {maxCharacters !== undefined && (
+        <p
+          className={`text-right text-xs ${length > maxCharacters ? 'text-danger' : 'text-muted'}`}
+          aria-hidden="true"
+        >
+          {length} / {maxCharacters}
+        </p>
+      )}
     </FieldShell>
   )
 }

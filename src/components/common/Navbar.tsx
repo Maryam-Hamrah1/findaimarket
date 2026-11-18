@@ -9,6 +9,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 import { useCart } from '../../hooks/useCart'
+import { useMyStore } from '../../hooks/useStores'
 import Button from '../ui/Button'
 import UserMenu from './UserMenu'
 
@@ -43,6 +44,7 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { user, logout, hasRole } = useAuth()
   const navigate = useNavigate()
+  const myStore = useMyStore()
   const closeMenu = () => setMobileMenuOpen(false)
 
   const navLinks = [
@@ -139,12 +141,18 @@ export default function Navbar() {
             {user ? (
               <>
                 <p className="truncate text-sm font-semibold text-foreground">{user.fullName}</p>
-                <Link to="/account" onClick={closeMenu} className="text-sm font-medium text-foreground hover:text-accent">My Account</Link>
+                <Link to="/account" onClick={closeMenu} className="text-sm font-medium text-foreground hover:text-accent">Account Settings</Link>
                 <Link to="/account/orders" onClick={closeMenu} className="text-sm font-medium text-foreground hover:text-accent">My Orders</Link>
                 <Link to="/account/wishlist" onClick={closeMenu} className="text-sm font-medium text-foreground hover:text-accent">Wishlist</Link>
-                {hasRole('seller') && (
-                  <Link to="/seller/dashboard" onClick={closeMenu} className="text-sm font-medium text-foreground hover:text-accent">Seller Dashboard</Link>
-                )}
+                {hasRole('seller') &&
+                  (myStore ? (
+                    <>
+                      <Link to={`/store/${myStore.store.slug}`} onClick={closeMenu} className="text-sm font-medium text-foreground hover:text-accent">My Store</Link>
+                      <Link to="/seller/dashboard" onClick={closeMenu} className="text-sm font-medium text-foreground hover:text-accent">Seller Dashboard</Link>
+                    </>
+                  ) : (
+                    <Link to="/seller/onboarding" onClick={closeMenu} className="text-sm font-medium text-accent">Set Up My Store</Link>
+                  ))}
                 <Button
                   variant="outline"
                   fullWidth

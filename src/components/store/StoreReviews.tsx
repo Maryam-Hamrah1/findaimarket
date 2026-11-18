@@ -9,6 +9,7 @@ interface StoreReviewsProps {
   reviews: StoreReview[]
   /** Only the first N reviews are shown (used on the Home tab) */
   limit?: number
+  userCreated?: boolean
 }
 
 export function ReviewCard({ review }: { review: StoreReview }) {
@@ -29,7 +30,7 @@ export function ReviewCard({ review }: { review: StoreReview }) {
   )
 }
 
-export default function StoreReviews({ store, reviews, limit }: StoreReviewsProps) {
+export default function StoreReviews({ store, reviews, limit, userCreated = false }: StoreReviewsProps) {
   const breakdown = getRatingBreakdown(store.slug)
   const visible = limit === undefined ? reviews : reviews.slice(0, limit)
 
@@ -39,7 +40,11 @@ export default function StoreReviews({ store, reviews, limit }: StoreReviewsProp
         average={store.rating}
         total={store.reviewCount}
         breakdown={breakdown}
-        note="Sample ratings for design preview. Reviews cannot be submitted yet."
+        note={
+          userCreated
+            ? 'No ratings yet. Reviews cannot be submitted in this demo.'
+            : 'Sample ratings for design preview. Reviews cannot be submitted yet.'
+        }
       />
 
       <section aria-label="Customer reviews" className="space-y-4">

@@ -1,3 +1,4 @@
+import { useCatalog } from '../hooks/useCatalog'
 import { useEffect, useMemo, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 import StoreAbout from '../components/store/StoreAbout'
@@ -14,6 +15,7 @@ import Breadcrumb from '../components/ui/Breadcrumb'
 import { getStoreDetails } from '../data/storeDetails'
 import { getStoreProducts, getStoreSections } from '../data/storeProducts'
 import { getStoreBySlug } from '../data/stores'
+import { useStores } from '../hooks/useStores'
 import type { Store, StoreDetails, StoreTab } from '../types/store'
 
 const TABS: ReadonlyArray<StoreTab> = ['home', 'products', 'about', 'reviews']
@@ -36,7 +38,8 @@ function StoreView({ store, details }: StoreViewProps) {
   const [contactOpen, setContactOpen] = useState(false)
   const [initialSection, setInitialSection] = useState<string | null>(null)
 
-  const products = useMemo(() => getStoreProducts(store.name), [store.name])
+  const catalog = useCatalog()
+  const products = useMemo(() => getStoreProducts(store.name, catalog), [store.name, catalog])
   const sections = useMemo(() => getStoreSections(products), [products])
 
   useEffect(() => {
@@ -72,6 +75,12 @@ function StoreView({ store, details }: StoreViewProps) {
           ]}
         />
 
+        {details.userCreated && (
+          <p className="mb-5 rounded-xl border border-brand-border bg-surface px-4 py-3 text-xs leading-5 text-muted">
+            Demo store created with seller onboarding. It is saved in this browser only and is not visible to other people.
+          </p>
+        )}
+
         <StoreCover src={store.coverImage} />
 
         <StoreIdentity
@@ -81,7 +90,11 @@ function StoreView({ store, details }: StoreViewProps) {
           onContact={() => setContactOpen(true)}
         />
 
-        <StoreStats store={store} followers={store.followers + (following ? 1 : 0)} />
+        <StoreStats
+          store={store}
+          followers={store.followers + (following ? 1 : 0)}
+          userCreated={details.userCreated === true}
+        />
 
         <StoreNavigation
           active={tab}
@@ -116,7 +129,7 @@ function StoreView({ store, details }: StoreViewProps) {
           )}
           {tab === 'about' && <StoreAbout store={store} details={details} />}
           {tab === 'reviews' && (
-            <StoreReviews store={store} reviews={details.reviews} />
+            <StoreReviews store={store} reviews={details.reviews} userCreated={details.userCreated === true} />
           )}
         </div>
       </div>
@@ -132,6 +145,7 @@ function StoreView({ store, details }: StoreViewProps) {
 
 export default function StorePage() {
   const { slug } = useParams()
+  useStores() // re-render when a store is created in another tab
   const store = getStoreBySlug(slug)
   const details = store ? getStoreDetails(store.slug) : undefined
 

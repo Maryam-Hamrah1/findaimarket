@@ -4,15 +4,30 @@ import { useState, type FormEvent } from 'react'
 interface SearchInputProps {
   placeholder?: string
   onSearch?: (query: string) => void
+  /** Called when the field is cleared (X button) or submitted empty */
+  onClear?: () => void
+  /** Text shown in the field; when it changes from outside, the field follows */
+  initialValue?: string
+  submitLabel?: string
   className?: string
 }
 
 export default function SearchInput({
   placeholder = 'Search products, brands, and stores...',
   onSearch,
+  onClear,
+  initialValue = '',
+  submitLabel = 'Find it',
   className = '',
 }: SearchInputProps) {
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = useState(initialValue)
+  const [previousInitial, setPreviousInitial] = useState(initialValue)
+
+  // Keep the field in sync when the value changes from outside (URL, back button)
+  if (initialValue !== previousInitial) {
+    setPreviousInitial(initialValue)
+    setQuery(initialValue)
+  }
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -21,7 +36,14 @@ export default function SearchInput({
 
     if (trimmedQuery) {
       onSearch?.(trimmedQuery)
+    } else {
+      onClear?.()
     }
+  }
+
+  const handleClear = () => {
+    setQuery('')
+    onClear?.()
   }
 
   return (
@@ -49,13 +71,13 @@ export default function SearchInput({
         onChange={(event) => setQuery(event.target.value)}
         placeholder={placeholder}
         aria-label="Describe what you are looking for"
-        className="min-w-0 flex-1 bg-transparent py-3 text-base text-foreground outline-none placeholder:text-muted"
+        className="min-w-0 flex-1 bg-transparent py-3 text-base text-foreground outline-none placeholder:text-muted [&::-webkit-search-cancel-button]:hidden"
       />
 
       {query && (
         <button
           type="button"
-          onClick={() => setQuery('')}
+          onClick={handleClear}
           aria-label="Clear search"
           className="rounded-full p-1 text-muted hover:bg-surface"
         >
@@ -67,7 +89,7 @@ export default function SearchInput({
         type="submit"
         className="flex shrink-0 items-center gap-2 rounded-full bg-accent px-6 py-3.5 text-sm font-bold text-on-accent transition-colors hover:bg-accent-hover"
       >
-        <span>Find it</span>
+        <span>{submitLabel}</span>
       </button>
     </form>
   )

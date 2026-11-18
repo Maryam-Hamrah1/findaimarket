@@ -6,6 +6,8 @@ interface EmptyStateProps {
   hasFilters: boolean
   onClearFilters: () => void
   onClearSearch: () => void
+  /** What is being listed, e.g. "product" or "store" */
+  subject?: string
 }
 
 export default function EmptyState({
@@ -13,6 +15,7 @@ export default function EmptyState({
   hasFilters,
   onClearFilters,
   onClearSearch,
+  subject = 'product',
 }: EmptyStateProps) {
   return (
     <div className="mt-6 flex flex-col items-center rounded-3xl border border-dashed border-brand-border bg-surface px-6 py-16 text-center">
@@ -21,13 +24,13 @@ export default function EmptyState({
       </div>
 
       <h2 className="mt-6 font-display text-3xl font-semibold text-foreground">
-        No products found
+        No {subject}s found
       </h2>
 
       <p className="mt-3 max-w-md text-sm leading-6 text-muted sm:text-base">
         {query
-          ? `Nothing matches "${query}" with the current filters. Try different words, a wider budget or fewer filters.`
-          : 'No product matches the selected filters. Try removing some of them.'}
+          ? `Nothing matches "${query}" with the current filters. Try different words or fewer filters.`
+          : `No ${subject} matches the selected filters. Try removing some of them.`}
       </p>
 
       <div className="mt-8 flex flex-wrap justify-center gap-3">

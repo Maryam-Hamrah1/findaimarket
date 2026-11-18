@@ -26,6 +26,7 @@ import {
 import { buildLines } from '../utils/cart'
 import { normaliseAddress, validateAddress } from '../utils/checkout'
 import { saveOrder } from '../services/orderHistory'
+import { recordSellerOrders } from '../services/orderRouting'
 import { buildDemoOrder } from '../utils/orders'
 import { calculateCheckoutTotals, getCheckoutGroups } from '../utils/shipping'
 
@@ -130,6 +131,7 @@ export default function CheckoutPage() {
 
     setOrder(placed)
     if (user) saveOrder(user.id, placed)
+    recordSellerOrders(placed, user?.id)
 
     // Take the purchased items out of the cart. Saved-for-later and unavailable items stay.
     for (const group of groups) {

@@ -1,6 +1,7 @@
+import type { Product } from '../types/product'
 import type { StoreProduct, StoreSection } from '../types/store'
 import { getCategoryName } from './categories'
-import { PRODUCTS } from './products'
+import { getPublicProducts } from './catalog'
 
 /*
   Each store groups its own products in its own way (a fashion store has "Bags",
@@ -32,8 +33,11 @@ const STORE_SECTIONS: Readonly<Record<number, string>> = {
 }
 
 /** Only products that belong to this store. Products of other stores never appear. */
-export function getStoreProducts(storeName: string): StoreProduct[] {
-  return PRODUCTS.filter((product) => product.store === storeName).map(
+export function getStoreProducts(
+  storeName: string,
+  catalog: ReadonlyArray<Product> = getPublicProducts(),
+): StoreProduct[] {
+  return catalog.filter((product) => product.store === storeName).map(
     (product) => ({
       ...product,
       section: STORE_SECTIONS[product.id] ?? getCategoryName(product.category),

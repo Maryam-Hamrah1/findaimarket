@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import SearchInput from '../ui/SearchInput'
 
 const suggestions = [
@@ -24,8 +25,11 @@ const matches = [
 ]
 
 export default function HeroSection() {
+  const navigate = useNavigate()
+
+  // A search from the home page opens Explore with the request already applied
   const handleSearch = (query: string) => {
-    console.log('Search:', query)
+    navigate(`/explore?q=${encodeURIComponent(query)}`)
   }
 
   return (

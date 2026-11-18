@@ -1,3 +1,4 @@
+import { storeRegistry } from '../services/storeRegistry'
 import type { StoreDetails } from '../types/store'
 
 /*
@@ -325,5 +326,8 @@ export const STORE_DETAILS: ReadonlyArray<StoreDetails> = [
 ]
 
 export function getStoreDetails(slug: string): StoreDetails | undefined {
-  return STORE_DETAILS.find((details) => details.slug === slug)
+  return (
+    STORE_DETAILS.find((details) => details.slug === slug) ??
+    storeRegistry.getBySlug(slug)?.details
+  )
 }
